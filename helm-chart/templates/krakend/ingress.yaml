@@ -1,0 +1,34 @@
+{{- if .Values.krakend.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ printf "%s-ingress" (include "krakend.fullname" .) }}
+  namespace: {{ .Release.Namespace | quote }}
+  annotations:
+    {{- if .Values.krakend.ingress.certManagerIssuer }}
+    cert-manager.io/issuer: {{ .Values.krakend.ingress.certManagerIssuer }}
+    {{- else if .Values.krakend.ingress.certManagerClusterIssuer }}
+    cert-manager.io/cluster-issuer: {{ .Values.krakend.ingress.certManagerClusterIssuer }}
+    {{- end }}
+spec:
+  ingressClassName: {{ .Values.krakend.ingress.className }}
+  {{- if .Values.krakend.ingress.tls.enabled }}
+  tls:
+    {{- with .Values.krakend.ingress }}
+    - hosts:
+       - {{ .hostname }}
+      secretName: {{ printf "%s-tls" .hostname }}
+    {{- end }}
+  {{- end }}
+  rules:
+    - host: {{ .Values.krakend.ingress.hostname | quote}}
+      http:
+        paths:
+          - path: {{ .Values.krakend.ingress.path }}
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "krakend.fullname" . }}
+                port:
+                  number: {{ .Values.krakend.service.ports.api.port }}
+{{- end }}

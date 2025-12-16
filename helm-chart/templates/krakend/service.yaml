@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "krakend.fullname" . }}
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "krakend.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.krakend.service.type }}
+  ports:
+    - name: api
+      port: {{ .Values.krakend.service.ports.api.port }}
+      targetPort: {{ .Values.krakend.service.ports.api.targetPort }}
+      protocol: {{ .Values.krakend.service.ports.api.protocol }}
+      {{- if and (or (eq .Values.krakend.service.type "NodePort") (eq .Values.krakend.service.type "LoadBalancer")) (not (empty .Values.krakend.service.ports.api.nodePort)) }}
+      nodePort: {{ .Values.krakend.service.ports.api.nodePort }}
+      {{- end }}
+  selector:
+    {{- include "krakend.selectorLabels" . | nindent 4 }}

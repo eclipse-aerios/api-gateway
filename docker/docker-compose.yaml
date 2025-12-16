@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  krakend:
+    image: devopsfaith/krakend:2.6.3
+    ports:
+      - "30880:8080"
+    volumes:
+      # No TLS
+      - ./krakend.json:/etc/krakend/krakend.json
+      # enable TLS
+      #- ./krakend.json:/etc/krakend/krakend-tls.json
+      # - ./certs:/etc/krakend/certs
+    command: ["run", "-d", "-c", "/etc/krakend/krakend.json"]
+    restart: always
