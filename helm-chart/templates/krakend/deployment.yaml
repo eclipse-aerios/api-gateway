@@ -22,6 +22,10 @@ spec:
       labels:
         {{- include "krakend.labels" . | nindent 8 }}
     spec:
+      dnsConfig:
+        options:
+          - name: ndots
+            value: {{.Values.krakend.dns.ndots | quote}}
       {{- with .Values.krakend.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}

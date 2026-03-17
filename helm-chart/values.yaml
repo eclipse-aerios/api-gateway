@@ -96,6 +96,9 @@ krakend:
     # - id: fa163e32c6ee
     #   internalIp: 10.0.0.238
 
+  dns:
+    ndots: 5
+
   tls:
     enabled: false
     existingSecret: ""
